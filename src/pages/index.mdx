@@ -1,6 +1,6 @@
 ---
 layout: ../layouts/Layout.astro
-title: Disentangled Iterative Surface Fitting for Constrained Grasp Planning
+title: Disentangled Iterative Surface Fitting for Grasp Planning
 description: Simple project page template for your research paper, built with Astro and Tailwind CSS
 favicon: favicon.svg
 thumbnail: screenshot.png
@@ -18,8 +18,11 @@ import TwoColumns from "../components/TwoColumns.astro";
 import YouTubeVideo from "../components/YouTubeVideo.astro";
 import LaTeX from "../components/LaTeX.astro";
 
-import outside from "../assets/outside.mp4";
+import outside from "../assets/grasp_banana.mp4";
 import transformer from "../assets/transformer.webp";
+import disf from "../assets/disf_concept_v3-crop.png";
+import contact_surface_opt from "../assets/contact_surface_optimization_v2-crop.png"
+import cache_video from "../assets/grasp_execution_video_drill_high_resolution.mp4"
 import Splat from "../components/Splat.tsx"
 
 import CodeBlock from "../components/CodeBlock.astro";
@@ -83,7 +86,7 @@ export const components = {pre: CodeBlock, table: Table}
   ]}
   />
 
-<Video source={outside} />
+<Video source={cache_video} />
 
 <HighlightedSection>
 
@@ -93,46 +96,86 @@ This is a live demo for a template you can use to create a simple project page f
 
 </HighlightedSection>
 
-## Figures
+## DISF framwork
 
-Use the figure component to display images, videos, equations, or any other element, with an optional caption.
+The below figure shows our proposed DISF framework. 
+Instead of simultaneously optimizing all surface fitting errors, our DISF disentangles them based on the gripper transformation parameters and updates each parameter for individual metrics. 
+This disentanglement prevents the optimization process from being dominated by certain surface fitting errors, which could otherwise lead to convergence to infeasible local optima.
 
-<Figure
-    caption="Diagram of the transformer deep learning architecture."
-  >
-    <Image source={transformer} altText="Diagram of the transformer deep learning architecture." />
+
+<Figure caption="Overview of the proposed DISF framework.">
+  <Image source={disf} altText="Overview of the proposed DISF framework." class="max-h-[50rem]" />
 </Figure>
 
-## Two columns
 
-Use the two columns component to display two columns of content. In this example, the first column contains a figure with a YouTube video and the second column contains a figure with a custom [React](https://react.dev/) component. By default, they display side by side, but if the screen is narrow enough (for example, on mobile), they're arranged vertically.
 
-<TwoColumns>
+
+## Contact Surface Optimization
+
+The grasp planning problem with antipodal grippers can be modeled as a contact surface optimization problem 
+which maximizes the grasp quality <LaTeX inline formula="Q" /> by optimizing the rotation and translation parameter <LaTeX inline formula="(\mathbf{R}, \mathbf{t})" />
+as well as the fingertip displacement <LaTeX inline formula="\delta d" /> from the original gripper width, 
+given a specific set of contact surfaces between the fingertip <LaTeX inline formula="\mathcal{S}^f" /> 
+and object <LaTeX inline formula="\mathcal{S}^o" />. 
+This optimization can be demonstrated as below figure.  
+
+<Figure
+    caption="An image demonstrating how grasp planning can be reformulated as a contact surface optimization problem."
+  >
+    <Image source={contact_surface_opt} 
+      altText="An image demonstrating how grasp planning can be reformulated as a contact surface optimization problem." 
+      class="max-w-2xl w-full"
+    />
+</Figure>
+
+{/* <TwoColumns>
   <Figure slot="left" caption="Take a look at this YouTube video.">
     <YouTubeVideo videoId="wjZofJX0v4M" />
   </Figure>
   <Figure slot="right" caption="Now look at this Gaussian Splat, rendered with a React component.">
     <Splat client:idle />
   </Figure>
-</TwoColumns>
+</TwoColumns> */}
 
-## Heading levels
+
+
+## Simulation Experiment 
 
 Use headings to divide your content into sections.
 
-### Heading 3
+### Grasp Performance Comparison
 
 Go down a level to heading 3...
 
-#### Heading 4
 
-...and down again to heading 4.
+
+
+
+### Planned Grasp Execution
+
+## 4x4 Video Grid
+
+<div class="grid grid-cols-2 gap-4">
+  <Video source="../assets/outside.mp4" /> {/* 1 */}
+  <Video source={outside} class="w-full h-auto" /> {/* 2 */}
+  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 3 */}
+  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 4 */}
+  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 5 */}
+  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 6 */}
+  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 7 */}
+  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 8 */}
+</div>
+
+
 
 ## LaTeX
 
 You can also add LaTeX formulas, rendered during the build process using [KaTeX](https://katex.org/) so they're quick to load for visitors of your project page. You can write them inline, like this: <LaTeX inline formula="a^2 + b^2 = c^2" />. Or, you can write them as a block:
 
 <LaTeX formula="\int_a^b f(x) dx" />
+
+
+
 
 ## Tables
 
@@ -151,7 +194,7 @@ You can add simple tables using [GitHub Flavored Markdown syntax](https://docs.g
 ```bibtex
 @inproceedings{taxonomy2, 
   author       = {Tomoya Yamanokuchi, Alberto Bacchin, Emilio Olivastri, Takamitsu Matsubara, Emanuele Menegatti},
-  title        = {Disentangled Iterative Surface Fitting for Constrained Grasp Planning},
+  title        = {Disentangled Iterative Surface Fitting for Grasp Planning},
   booktitle    = {The 19th international conference on Intelligent Autonomous Systems},
 }
 ```
