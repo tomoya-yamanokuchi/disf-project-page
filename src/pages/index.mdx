@@ -25,6 +25,18 @@ import contact_surface_opt from "../assets/contact_surface_optimization_v2-crop.
 import cache_video from "../assets/grasp_execution_video_drill_high_resolution.mp4"
 import Splat from "../components/Splat.tsx"
 
+import mustard_bottle    from "../assets/grasp_execution/grasp_execution_video_006_mustard_bottle.mp4"
+import banana            from "../assets/grasp_execution/grasp_execution_video_011_banana.mp4"
+import plate             from "../assets/grasp_execution/grasp_execution_video_029_plate.mp4"
+import spatula           from "../assets/grasp_execution/grasp_execution_video_033_spatula.mp4"
+import power_drill       from "../assets/grasp_execution/grasp_execution_video_035_power_drill.mp4"
+import scissors          from "../assets/grasp_execution/grasp_execution_video_037_scissors.mp4"
+import adjustable_wrench from "../assets/grasp_execution/grasp_execution_video_042_adjustable_wrench.mp4"
+import hammer            from "../assets/grasp_execution/grasp_execution_video_048_hammer.mp4"
+import golf_ball         from "../assets/grasp_execution/grasp_execution_video_058_golf_ball.mp4"
+import j_cups            from "../assets/grasp_execution/grasp_execution_video_065-j_cups.mp4"
+
+
 import CodeBlock from "../components/CodeBlock.astro";
 import Table from "../components/Table.astro";
 export const components = {pre: CodeBlock, table: Table}
@@ -52,7 +64,7 @@ export const components = {pre: CodeBlock, table: Table}
     },
     {
       name: "Emanuele Menegatti",
-      url: "https://www.dei.unipd.it/~emg/", 
+      url: "https://www.dei.unipd.it/~emg/",
       institution: "University of Padua",
     },
   ]}
@@ -94,12 +106,15 @@ export const components = {pre: CodeBlock, table: Table}
 
 This is a live demo for a template you can use to create a simple project page for your research paper. See the code for the template and instructions on how to use it yourself [here](https://github.com/RomanHauksson/academic-project-astro-template). It's made with the [Astro web framework](https://astro.build/) and styled with [Tailwind CSS](https://tailwindcss.com/). You write the content in [MDX](https://mdxjs.com/), which enables markdown formatting like **bold**, _italics_, and ~strikethrough~, as well as custom components like <SmallCaps>small caps.</SmallCaps>
 
+--------- to be fixed !!! -------
+
+
 </HighlightedSection>
 
-## DISF framwork
+## Proposed framwork
 
-The below figure shows our proposed DISF framework. 
-Instead of simultaneously optimizing all surface fitting errors, our DISF disentangles them based on the gripper transformation parameters and updates each parameter for individual metrics. 
+The below figure shows our proposed DISF framework.
+Instead of simultaneously optimizing all surface fitting errors, our DISF disentangles them based on the gripper transformation parameters and updates each parameter for individual metrics.
 This disentanglement prevents the optimization process from being dominated by certain surface fitting errors, which could otherwise lead to convergence to infeasible local optima.
 
 
@@ -112,18 +127,18 @@ This disentanglement prevents the optimization process from being dominated by c
 
 ## Contact Surface Optimization
 
-The grasp planning problem with antipodal grippers can be modeled as a contact surface optimization problem 
+The grasp planning problem with antipodal grippers can be modeled as a contact surface optimization problem
 which maximizes the grasp quality <LaTeX inline formula="Q" /> by optimizing the rotation and translation parameter <LaTeX inline formula="(\mathbf{R}, \mathbf{t})" />
-as well as the fingertip displacement <LaTeX inline formula="\delta d" /> from the original gripper width, 
-given a specific set of contact surfaces between the fingertip <LaTeX inline formula="\mathcal{S}^f" /> 
-and object <LaTeX inline formula="\mathcal{S}^o" />. 
-This optimization can be demonstrated as below figure.  
+as well as the fingertip displacement <LaTeX inline formula="\delta d" /> from the original gripper width,
+given a specific set of contact surfaces between the fingertip <LaTeX inline formula="\mathcal{S}^f" />
+and object <LaTeX inline formula="\mathcal{S}^o" />.
+This optimization can be demonstrated as below figure.
 
 <Figure
     caption="An image demonstrating how grasp planning can be reformulated as a contact surface optimization problem."
   >
-    <Image source={contact_surface_opt} 
-      altText="An image demonstrating how grasp planning can be reformulated as a contact surface optimization problem." 
+    <Image source={contact_surface_opt}
+      altText="An image demonstrating how grasp planning can be reformulated as a contact surface optimization problem."
       class="max-w-2xl w-full"
     />
 </Figure>
@@ -138,61 +153,90 @@ This optimization can be demonstrated as below figure.
 </TwoColumns> */}
 
 
-
-## Simulation Experiment 
-
-Use headings to divide your content into sections.
+## Simulation Experiment
 
 ### Grasp Performance Comparison
 
-Go down a level to heading 3...
+This table presents the success and failure rates of grasp executions in the simulation experiments.
+In the columns for each method, a ✅ indicates success, while a horizontal bar (-) indicates failure.
+The "Correspondence" column shows the total number of correspondence pairs used for surface fitting optimization.
+The bottom row reports the overall grasp success rate for each method across all objects.
+
+| Object                        | DISF (ours) | ISF | Correspondence |
+|-------------------------------|:-----------:|:---:|:-------------:|
+| `006_mustard_bottle`          | ✅          | -   | 8             |
+| `011_banana`                  | ✅          | -   | 3             |
+| `029_plate`                   | -          | -   | 5             |
+| `033_spatula`                 | -          | -   | 6             |
+| `035_power_drill`             | ✅          | -   | 7             |
+| `037_scissors`                | ✅          | -   | 6             |
+| `042_adjustable_wrench`       | ✅          | -   | 3             |
+| `048_hammer`                  | ✅          | -   | 6             |
+| `058_golf_ball`               | ✅          | -   | 7             |
+| `065-j_cups`                  | ✅          | -   | 3             |
+| **Success Rate**              | **8/10**    | **0/10** | - |
 
 
 
+### Planned Grasp Execution (<span className="text-blue-500">Success Cases</span>)
 
-
-### Planned Grasp Execution
-
-## 4x4 Video Grid
-
-<div class="grid grid-cols-2 gap-4">
-  <Video source="../assets/outside.mp4" /> {/* 1 */}
-  <Video source={outside} class="w-full h-auto" /> {/* 2 */}
-  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 3 */}
-  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 4 */}
-  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 5 */}
-  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 6 */}
-  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 7 */}
-  <Video source="../assets/outside.mp4" class="w-full h-auto" /> {/* 8 */}
+<div className="grid grid-cols-2 gap-4">
+  <figure>
+    <Video source={mustard_bottle} className="w-full h-auto" />
+    <figcaption className="text-center text-sm mt-2">Mustard Bottle</figcaption>
+  </figure>
+  <figure>
+    <Video source={banana} className="w-full h-auto" />
+    <figcaption className="text-center text-sm mt-2">Banana</figcaption>
+  </figure>
+  <figure>
+    <Video source={power_drill} className="w-full h-auto" />
+    <figcaption className="text-center text-sm mt-2">Power Drill</figcaption>
+  </figure>
+  <figure>
+    <Video source={scissors} className="w-full h-auto" />
+    <figcaption className="text-center text-sm mt-2">Scissors</figcaption>
+  </figure>
+  <figure>
+    <Video source={adjustable_wrench} className="w-full h-auto" />
+    <figcaption className="text-center text-sm mt-2">Adjustable Wrench</figcaption>
+  </figure>
+  <figure>
+    <Video source={hammer} className="w-full h-auto" />
+    <figcaption className="text-center text-sm mt-2">Hammer</figcaption>
+  </figure>
+  <figure>
+    <Video source={golf_ball} className="w-full h-auto" />
+    <figcaption className="text-center text-sm mt-2">Golf Ball</figcaption>
+  </figure>
+  <figure>
+    <Video source={j_cups} className="w-full h-auto" />
+    <figcaption className="text-center text-sm mt-2">J Cups</figcaption>
+  </figure>
 </div>
 
 
-
-## LaTeX
-
-You can also add LaTeX formulas, rendered during the build process using [KaTeX](https://katex.org/) so they're quick to load for visitors of your project page. You can write them inline, like this: <LaTeX inline formula="a^2 + b^2 = c^2" />. Or, you can write them as a block:
-
-<LaTeX formula="\int_a^b f(x) dx" />
+### Planned Grasp Execution (<span className="text-red-500">Failure Cases</span>)
 
 
+<div className="grid grid-cols-2 gap-4">
+  <figure>
+    <Video source={plate} className="w-full h-auto" />
+    <figcaption className="text-center text-sm mt-2">Plate</figcaption>
+  </figure>
+  <figure>
+    <Video source={spatula} className="w-full h-auto" />
+    <figcaption className="text-center text-sm mt-2">Spatula</figcaption>
+  </figure>
+</div>
 
 
-## Tables
-
-You can add simple tables using [GitHub Flavored Markdown syntax](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables):
-
-| Model | Accuracy | F1 score | Training time (hours) |
-| :--- | :---: | :---: | :---: |
-| BERT-base | 0.89 | 0.87 | 4.5 |
-| RoBERTa-large | 0.92 | 0.91 | 7.2 |
-| DistilBERT | 0.86 | 0.84 | 2.1 |
-| XLNet | 0.90 | 0.89 | 6.8 |
 
 ## BibTeX citation
 
 
 ```bibtex
-@inproceedings{taxonomy2, 
+@inproceedings{disf_IAS19_2025,
   author       = {Tomoya Yamanokuchi, Alberto Bacchin, Emilio Olivastri, Takamitsu Matsubara, Emanuele Menegatti},
   title        = {Disentangled Iterative Surface Fitting for Grasp Planning},
   booktitle    = {The 19th international conference on Intelligent Autonomous Systems},

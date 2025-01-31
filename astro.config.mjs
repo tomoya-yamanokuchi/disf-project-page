@@ -12,5 +12,8 @@ export default defineConfig({
     shikiConfig: {
       theme: "github-light"
     }
-  }
+  },
+  site: "https://tomoya-yamanokuchi.github.io/disf-project-page/",
+  outDir: "dist", // デフォルト（通常は変更不要）
+  base: '/disf-project-page',
 });
