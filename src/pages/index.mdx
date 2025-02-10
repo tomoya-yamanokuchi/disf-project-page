@@ -232,6 +232,45 @@ The bottom row reports the overall grasp success rate for each method across all
 
 
 
+## Supplementary Information in the Simulation Experiment 
+
+### Environment
+  We use the [MuJoCo] as the simulator and Franka Emika Panda environment
+  from [MuJoCo Menagerie] for the grasp experiments.
+
+### Preprocessing of Point Cloud Data            
+  The point cloud data from publicly available datasets are often very large, 
+  making it challenging to directly use all the points for planning computations. 
+  Therefore, as an initial step, the loaded point cloud data were voxelized 
+  and downsampled. 
+  Specifically, downsampling was performed using [Open3D] with a voxel size of 
+  0.01 [m].
+  Next, normal vectors for the point cloud data were estimated using Open3D. 
+  Additionally, the estimated normal vectors were adjusted to ensure 
+  they pointed outward relative to the object's centroid.
+  Subsequently, potential contact regions on the object surface were extracted 
+  using the hand plane. 
+  A correspondence matching algorithm was then applied to the 
+  potential contact regions to extract contact points for grasp planning. 
+
+
+
+### Pre-Convex Shape Approximation of Objects: 
+  When directly loading object model files into the physics simulator 
+  for grasping experiments, the object shapes are automatically approximated 
+  as convex hulls within the simulator for collision detection purposes.
+  However, this convex hull approximation is often too coarse, resulting in 
+  significant deviations from the original 3D object shape and causing issues 
+  with executing grasping experiments accurately.
+  To address this, a pre-processing step using 
+  [CoACD] (Collision-Aware Convex Decomposition) was applied to ensure 
+  that the original object shape is preserved even after 
+  automatic convex approximations are applied within the simulator 
+  (in our case, Mujoco 3.2.4). 
+  The resolution parameter for the CoACD approximation was set to 50.
+
+
+
 ## BibTeX citation
 
 
