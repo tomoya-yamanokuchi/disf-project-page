@@ -126,6 +126,37 @@ The bottom row reports the overall grasp success rate for each method across all
 <div class="grid grid-cols-2 gap-4"><figure><div class="w-full flex justify-center"> <video class="w-full h-auto aspect-video rounded-lg" autoplay controls muted loop> <source src="/disf-project-page/_astro/grasp_execution_video_006_mustard_bottle.BYmo9ARb.mp4" type="video/mp4"> </video> </div><figcaption class="text-center text-sm mt-2">Mustard Bottle</figcaption></figure><figure><div class="w-full flex justify-center"> <video class="w-full h-auto aspect-video rounded-lg" autoplay controls muted loop> <source src="/disf-project-page/_astro/grasp_execution_video_011_banana.1ruL6adV.mp4" type="video/mp4"> </video> </div><figcaption class="text-center text-sm mt-2">Banana</figcaption></figure><figure><div class="w-full flex justify-center"> <video class="w-full h-auto aspect-video rounded-lg" autoplay controls muted loop> <source src="/disf-project-page/_astro/grasp_execution_video_035_power_drill.sURQQtZK.mp4" type="video/mp4"> </video> </div><figcaption class="text-center text-sm mt-2">Power Drill</figcaption></figure><figure><div class="w-full flex justify-center"> <video class="w-full h-auto aspect-video rounded-lg" autoplay controls muted loop> <source src="/disf-project-page/_astro/grasp_execution_video_037_scissors.ykf-uS17.mp4" type="video/mp4"> </video> </div><figcaption class="text-center text-sm mt-2">Scissors</figcaption></figure><figure><div class="w-full flex justify-center"> <video class="w-full h-auto aspect-video rounded-lg" autoplay controls muted loop> <source src="/disf-project-page/_astro/grasp_execution_video_042_adjustable_wrench.C6saFlmf.mp4" type="video/mp4"> </video> </div><figcaption class="text-center text-sm mt-2">Adjustable Wrench</figcaption></figure><figure><div class="w-full flex justify-center"> <video class="w-full h-auto aspect-video rounded-lg" autoplay controls muted loop> <source src="/disf-project-page/_astro/grasp_execution_video_048_hammer.CvczWugj.mp4" type="video/mp4"> </video> </div><figcaption class="text-center text-sm mt-2">Hammer</figcaption></figure><figure><div class="w-full flex justify-center"> <video class="w-full h-auto aspect-video rounded-lg" autoplay controls muted loop> <source src="/disf-project-page/_astro/grasp_execution_video_058_golf_ball.CpZc0Wo2.mp4" type="video/mp4"> </video> </div><figcaption class="text-center text-sm mt-2">Golf Ball</figcaption></figure><figure><div class="w-full flex justify-center"> <video class="w-full h-auto aspect-video rounded-lg" autoplay controls muted loop> <source src="/disf-project-page/_astro/grasp_execution_video_065-j_cups.VuCHVoB7.mp4" type="video/mp4"> </video> </div><figcaption class="text-center text-sm mt-2">J Cups</figcaption></figure></div>
 <h3 id="planned-grasp-execution-failure-cases">Planned Grasp Execution (<span class="text-red-500">Failure Cases</span>)</h3>
 <div class="grid grid-cols-2 gap-4"><figure><div class="w-full flex justify-center"> <video class="w-full h-auto aspect-video rounded-lg" autoplay controls muted loop> <source src="/disf-project-page/_astro/grasp_execution_video_029_plate.Bo4kC64G.mp4" type="video/mp4"> </video> </div><figcaption class="text-center text-sm mt-2">Plate</figcaption></figure><figure><div class="w-full flex justify-center"> <video class="w-full h-auto aspect-video rounded-lg" autoplay controls muted loop> <source src="/disf-project-page/_astro/grasp_execution_video_033_spatula.DJ4Z8iQI.mp4" type="video/mp4"> </video> </div><figcaption class="text-center text-sm mt-2">Spatula</figcaption></figure></div>
+<h2 id="supplementary-information-in-the-simulation-experiment">Supplementary Information in the Simulation Experiment</h2>
+<h3 id="environment">Environment</h3>
+<p>We use the [MuJoCo] as the simulator and Franka Emika Panda environment
+from [MuJoCo Menagerie] for the grasp experiments.</p>
+<h3 id="preprocessing-of-point-cloud-data">Preprocessing of Point Cloud Data</h3>
+<p>The point cloud data from publicly available datasets are often very large,
+making it challenging to directly use all the points for planning computations.
+Therefore, as an initial step, the loaded point cloud data were voxelized
+and downsampled.
+Specifically, downsampling was performed using [Open3D] with a voxel size of
+0.01 [m].
+Next, normal vectors for the point cloud data were estimated using Open3D.
+Additionally, the estimated normal vectors were adjusted to ensure
+they pointed outward relative to the object’s centroid.
+Subsequently, potential contact regions on the object surface were extracted
+using the hand plane.
+A correspondence matching algorithm was then applied to the
+potential contact regions to extract contact points for grasp planning.</p>
+<h3 id="pre-convex-shape-approximation-of-objects">Pre-Convex Shape Approximation of Objects:</h3>
+<p>When directly loading object model files into the physics simulator
+for grasping experiments, the object shapes are automatically approximated
+as convex hulls within the simulator for collision detection purposes.
+However, this convex hull approximation is often too coarse, resulting in
+significant deviations from the original 3D object shape and causing issues
+with executing grasping experiments accurately.
+To address this, a pre-processing step using
+[CoACD] (Collision-Aware Convex Decomposition) was applied to ensure
+that the original object shape is preserved even after
+automatic convex approximations are applied within the simulator
+(in our case, Mujoco 3.2.4).
+The resolution parameter for the CoACD approximation was set to 50.</p>
 <h2 id="bibtex-citation">BibTeX citation</h2>
 <div class="px-6 w-full"> <pre class="relative flex flex-col whitespace-pre overflow-auto bg-zinc-300 p-4 rounded-lg w-full">    <code><span class="line"><span style="color:#D73A49">@inproceedings</span><span style="color:#24292E">{</span><span style="color:#6F42C1">disf_IAS19_2025</span><span style="color:#24292E">,</span></span>
 <span class="line"><span style="color:#005CC5">  author</span><span style="color:#24292E">       = </span><span style="color:#032F62">{</span><span style="color:#24292E">Tomoya Yamanokuchi, Alberto Bacchin, Emilio Olivastri, Takamitsu Matsubara, Emanuele Menegatti</span><span style="color:#032F62">}</span><span style="color:#24292E">,</span></span>
