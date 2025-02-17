@@ -1,6 +1,6 @@
 ---
 layout: ../layouts/Layout.astro
-title: Disentangled Iterative Surface Fitting for Grasp Planning
+title: Disentangled Iterative Surface Fitting for Contact-stable Grasp Planning
 description: Simple project page template for your research paper, built with Astro and Tailwind CSS
 favicon: favicon.svg
 thumbnail: screenshot.png
@@ -20,7 +20,10 @@ import LaTeX from "../components/LaTeX.astro";
 
 import outside from "../assets/grasp_banana.mp4";
 import transformer from "../assets/transformer.webp";
-import disf from "../assets/disf_concept_v3-crop.png";
+import Fig1 from "../assets/Fig1.png";
+import Fig2 from "../assets/Fig2.png";
+import Fig3 from "../assets/Fig3.png";
+import Fig_grasp_quality from "../assets/Fig_grasp_quality.png";
 import contact_surface_opt from "../assets/contact_surface_optimization_v2-crop.png"
 import cache_video from "../assets/grasp_execution_video_drill_high_resolution.mp4"
 import Splat from "../components/Splat.tsx"
@@ -68,32 +71,22 @@ export const components = {pre: CodeBlock, table: Table}
       institution: "University of Padua",
     },
   ]}
-  conference = "***to be submitted***"
-  notes={[
-    {/* {
-      symbol: "*",
-      text: "author note one",
-    },
-    {
-      symbol: "†",
-      text: "author note two",
-    }, */}
-  ]}
+  conference = "*** Under review ***"
   links={[
-    {
+    /* {
       name: "Paper",
       url: "",
       icon: "fa-solid:file-pdf",
-    },
-    {
-      name: "Code",
-      url: "https://github.com/RomanHauksson/academic-project-astro-template",
-      icon: "mdi:github",
-    },
+    }, */
     {
       name: "arXiv",
       url: "",
       icon: "academicons:arxiv",
+    },
+    {
+      name: "Code",
+      url: "https://github.com/tomoya-yamanokuchi/disf",
+      icon: "mdi:github",
     },
   ]}
   />
@@ -104,27 +97,41 @@ export const components = {pre: CodeBlock, table: Table}
 
 ## Abstract
 
-This is a live demo for a template you can use to create a simple project page for your research paper. See the code for the template and instructions on how to use it yourself [here](https://github.com/RomanHauksson/academic-project-astro-template). It's made with the [Astro web framework](https://astro.build/) and styled with [Tailwind CSS](https://tailwindcss.com/). You write the content in [MDX](https://mdxjs.com/), which enables markdown formatting like **bold**, _italics_, and ~strikethrough~, as well as custom components like <SmallCaps>small caps.</SmallCaps>
-
---------- to be fixed !!! -------
---------- to be fixed !!! -------
+In this work, we address the limitation of surface fitting-based grasp planning algorithm, which primarily focuses on geometric alignment between the gripper and object surface while overlooking the stability of contact point distribution, often resulting in unstable grasps due to inadequate contact configurations. To overcome this limitation, we propose a novel surface fitting algorithm that integrates contact stability while preserving geometric compatibility. Inspired by human grasping behavior, our method disentangles the grasp pose optimization into three sequential steps: (1) rotation optimization to align contact normals, (2) translation refinement to improve Center of Mass (CoM) alignment, and (3) gripper aperture adjustment to optimize contact point distribution. We validate our approach through simulations on ten YCB dataset objects, demonstrating an 80\% improvement in grasp success over conventional surface fitting methods that disregard contact stability. Further details can be found on our project page: https://tomoya-yamanokuchi.github.io/disf-project-page/.
 
 </HighlightedSection>
 
-## Proposed framwork
+## Overview
 
-The below figure shows our proposed DISF framework.
-Instead of simultaneously optimizing all surface fitting errors, our DISF disentangles them based on the gripper transformation parameters and updates each parameter for individual metrics.
-This disentanglement prevents the optimization process from being dominated by certain surface fitting errors, which could otherwise lead to convergence to infeasible local optima.
+While surface fitting algorithms based on geometric compatibility optimization offer high flexibility, they do not sufficiently account for whether the aligned surfaces actually lead to a stable grasp.
+Specifically, achieving a stable grasp requires the ability to generate contact forces that can fully counteract external forces and torques (known as force-closure property).
+However, by focusing solely on geometric alignment, these methods fail to consider fundamental factors necessary for generating contact forces, such as the appropriate spatial relationship between the hand and the object.
+As a result, even if the surfaces are geometrically well-aligned, a spatial gap can form between the hand and the object, preventing actual contact from being established, or leading to an unstable distribution of contact points.
 
+To address this issue, it is essential not only to align surfaces based on geometric compatibility but also to ensure that the hand and object surfaces are spatially well-aligned, allowing contact to be potentially established.
+We refer to this spatial alignment, which facilitates contact, as contact stability (Fig.1).
 
-<Figure caption="Overview of the proposed DISF framework.">
-  <Image source={disf} altText="Overview of the proposed DISF framework." class="max-h-[50rem]" />
+<Figure caption="Figure 1: The relationship between the grasp planning space, geometrically aligned space, and spatially aligned space.">
+  <Image source={Fig1} altText="Figure 1: The relationship between the grasp planning space, geometrically aligned space, and spatially aligned space." class="max-h-[100rem]" />
+</Figure>
+
+<br />
+## Proposed Framwork
+
+In this study, we propose a novel surface fitting-based grasp planning algorithm that incorporates contact stability alongside geometric compatibility, which we call Disentangled Iterative Surface Fitting (DISF).
+From the perspective of contact stability, we explicitly integrate CoM alignment into the optimization process, drawing inspiration from the observation that, as mentioned earlier, humans naturally align their hand's CoM with that of the object to enhance grasp stability.
+To achieve this, we leverage another key insight from human grasping behavior-that different pose parameters are optimized sequentially rather than simultaneously-and disentangle the overall grasp pose optimization into the following three sequential stages:
+(1) rotation optimization to align contact normals,
+(2) translation refinement for CoM alignment, and
+(3) gripper aperture adjustment to optimize contact point distribution.
+Our disentangled optimization framework preserves the advantages of flexible geometric compatibility evaluation while systematically enhancing contact stability through CoM alignment. The overview of our DISF framework is shown in Fig.2.
+
+<Figure caption="Figure 2: Overview of the proposed DISF framework.">
+  <Image source={Fig2} altText="Figure 2: Overview of the proposed DISF framework." class="max-h-[50rem]" />
 </Figure>
 
 
-
-
+<br />
 ## Contact Surface Optimization
 
 The grasp planning problem with antipodal grippers can be modeled as a contact surface optimization problem
@@ -132,13 +139,13 @@ which maximizes the grasp quality <LaTeX inline formula="Q" /> by optimizing the
 as well as the fingertip displacement <LaTeX inline formula="\delta d" /> from the original gripper width,
 given a specific set of contact surfaces between the fingertip <LaTeX inline formula="\mathcal{S}^f" />
 and object <LaTeX inline formula="\mathcal{S}^o" />.
-This optimization can be demonstrated as below figure.
+This optimization can be demonstrated in Fig.3.
 
 <Figure
-    caption="An image demonstrating how grasp planning can be reformulated as a contact surface optimization problem."
+    caption="Figure 3: An image demonstrating how grasp planning can be reformulated as a contact surface optimization problem."
   >
-    <Image source={contact_surface_opt}
-      altText="An image demonstrating how grasp planning can be reformulated as a contact surface optimization problem."
+    <Image source={Fig3}
+      altText="Figure 3: An image demonstrating how grasp planning can be reformulated as a contact surface optimization problem."
       class="max-w-2xl w-full"
     />
 </Figure>
@@ -153,32 +160,72 @@ This optimization can be demonstrated as below figure.
 </TwoColumns> */}
 
 
+<br />
+
 ## Simulation Experiment
 
-### Grasp Performance Comparison
+### Grasp Quality Evaluation
+To validate the effectiveness of the proposed method, we evaluated the grasp quality for ten YCB objects
+using both the conventional geometric compatibility measures and the contact stability measure via CoM misalignment introduced in this study.
+As an evaluation metric for geometric compatibility, we used the following weighted measure, which combines the surface distance
+and the contact normal misalignment.
 
-This table presents the success and failure rates of grasp executions in the simulation experiments.
+The results are shown in Fig.4.
+The Top part represents the geometric compatibility error, while the Bottom part represents the CoM alignment error.
+For geometric compatibility evaluation, the sampling-based approach (CMA-ES) and the proposed DISF exhibit
+lower errors, whereas the conventional VISF consistently shows higher errors. An interesting phenomenon is that VISF,
+which is supposed to optimize geometric compatibility, performs worse than the other two methods.
+
+
+<Figure
+    caption="Figure 4: The results of planned grasp quality."
+  >
+    <Image source={Fig_grasp_quality}
+      altText="Figure 4: The results of planned grasp quality.
+                   The Top part represents the geometric compatibility error, while the Bottom part represents the CoM alignment error.
+                   In both the Top and Bottom plots, lower values indicate better performance.
+                   For each object, the Top and Bottom correspond to the same method. "
+      class="max-w-2xl w-full"
+    />
+</Figure>
+
+
+<br />
+### Grasp Success Rate Evaluation
+
+To evaluate the feasibility of the planned grasps, we performed grasp executions in the MuJoCo physics simulator
+and assessed the grasp success rate for each object.
+
+The below table presents the success and failure rates of grasp executions in the simulation experiments.
 In the columns for each method, a ✅ indicates success, while a horizontal bar (-) indicates failure.
 The "Correspondence" column shows the total number of correspondence pairs used for surface fitting optimization.
-The bottom row reports the overall grasp success rate for each method across all objects.
+The bottom rows report the overall grasp success rate for each method across all objects and the average planning time in milliseconds.
 
-| Object                        | DISF (ours) | ISF | Correspondence |
-|-------------------------------|:-----------:|:---:|:-------------:|
-| `006_mustard_bottle`          | ✅          | -   | 8             |
-| `011_banana`                  | ✅          | -   | 3             |
-| `029_plate`                   | -          | -   | 5             |
-| `033_spatula`                 | -          | -   | 6             |
-| `035_power_drill`             | ✅          | -   | 7             |
-| `037_scissors`                | ✅          | -   | 6             |
-| `042_adjustable_wrench`       | ✅          | -   | 3             |
-| `048_hammer`                  | ✅          | -   | 6             |
-| `058_golf_ball`               | ✅          | -   | 7             |
-| `065-j_cups`                  | ✅          | -   | 3             |
-| **Success Rate**              | **8/10**    | **0/10** | - |
+This table summarizes the grasp execution results.
+It can be observed that the proposed DISF method outperforms the baseline methods,
+highlighting the importance of CoM alignment in ensuring stable distribution of contact points for successful grasps.
 
 
+| Object                        | CMA-ES | VISF | DISF (ours) | Correspondence |
+|--------------------------------|:------:|:----:|:-----------:|:-------------:|
+| `006_mustard_bottle`          | -      | -    | ✅          | 8             |
+| `011_banana`                  | -      | -    | ✅          | 3             |
+| `029_plate`                   | -      | -    | -          | 5             |
+| `033_spatula`                 | -      | -    | -          | 6             |
+| `035_power_drill`             | -      | -    | ✅          | 7             |
+| `037_scissors`                | -      | -    | ✅          | 6             |
+| `042_adjustable_wrench`       | -      | -    | ✅          | 3             |
+| `048_hammer`                  | -      | -    | ✅          | 6             |
+| `058_golf_ball`               | -      | -    | ✅          | 7             |
+| `065-j_cups`                  | ✅     | -    | ✅          | 3             |
+| **Success Rate**              | **1/10** | **0/10** | **8/10**  | -             |
+| **Planning Time [ms]**        | **172.4** | **1.4** | **4**   | -             |
 
-### Planned Grasp Execution (<span className="text-blue-500">Success Cases</span>)
+
+<br />
+### Planned Grasp Execution by Proposed DISF
+
+### <span className="text-blue-500">Success Cases</span>
 
 <div className="grid grid-cols-2 gap-4">
   <figure>
@@ -216,7 +263,7 @@ The bottom row reports the overall grasp success rate for each method across all
 </div>
 
 
-### Planned Grasp Execution (<span className="text-red-500">Failure Cases</span>)
+### <span className="text-red-500">Failure Cases</span>
 
 
 <div className="grid grid-cols-2 gap-4">
@@ -231,53 +278,21 @@ The bottom row reports the overall grasp success rate for each method across all
 </div>
 
 
+<br />
+<br />
 
-## Supplementary Information in the Simulation Experiment 
+## Supplementary Materials
 
-### Environment
-  We use the [MuJoCo] as the simulator and Franka Emika Panda environment
-  from [MuJoCo Menagerie] for the grasp experiments.
-
-### Preprocessing of Point Cloud Data            
-  The point cloud data from publicly available datasets are often very large, 
-  making it challenging to directly use all the points for planning computations. 
-  Therefore, as an initial step, the loaded point cloud data were voxelized 
-  and downsampled. 
-  Specifically, downsampling was performed using [Open3D] with a voxel size of 
-  0.01 [m].
-  Next, normal vectors for the point cloud data were estimated using Open3D. 
-  Additionally, the estimated normal vectors were adjusted to ensure 
-  they pointed outward relative to the object's centroid.
-  Subsequently, potential contact regions on the object surface were extracted 
-  using the hand plane. 
-  A correspondence matching algorithm was then applied to the 
-  potential contact regions to extract contact points for grasp planning. 
+<iframe src="/disf-project-page/assets/DISF_Supplementary_Materials.pdf" width="100%" height="600px"></iframe>
 
 
-
-### Pre-Convex Shape Approximation of Objects: 
-  When directly loading object model files into the physics simulator 
-  for grasping experiments, the object shapes are automatically approximated 
-  as convex hulls within the simulator for collision detection purposes.
-  However, this convex hull approximation is often too coarse, resulting in 
-  significant deviations from the original 3D object shape and causing issues 
-  with executing grasping experiments accurately.
-  To address this, a pre-processing step using 
-  [CoACD] (Collision-Aware Convex Decomposition) was applied to ensure 
-  that the original object shape is preserved even after 
-  automatic convex approximations are applied within the simulator 
-  (in our case, Mujoco 3.2.4). 
-  The resolution parameter for the CoACD approximation was set to 50.
-
-
-
+<br />
 ## BibTeX citation
-
 
 ```bibtex
 @inproceedings{disf_IAS19_2025,
   author       = {Tomoya Yamanokuchi, Alberto Bacchin, Emilio Olivastri, Takamitsu Matsubara, Emanuele Menegatti},
-  title        = {Disentangled Iterative Surface Fitting for Grasp Planning},
-  booktitle    = {***to be submitted***},
+  title        = {Disentangled Iterative Surface Fitting for Contact-stable Grasp Planning},
+  booktitle    = {*** under review ***},
 }
 ```
